@@ -1,0 +1,1017 @@
+{
+	"info": {
+		"_postman_id": "fbb9c500-ce38-4a2f-92a0-860bf11069ee",
+		"name": "Anaplan ALM APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25502368"
+	},
+	"item": [
+		{
+			"name": "Anaplan APIs",
+			"item": [
+				{
+					"name": "1. Auth Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"accessToken\", \"AnaplanAuthToken \" + json.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"client_id\": \"{{client_id}}\",\r\n    \"grant_type\": \"refresh_token\", \r\n    \"refresh_token\": \"{{refresh_token}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://us1a.app.anaplan.com/oauth/token",
+							"protocol": "https",
+							"host": [
+								"us1a",
+								"app",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"oauth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Change Model Status to offline or online",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"online\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/onlineStatus",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"onlineStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Retrieve compatible source model revisions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/syncableRevisions?sourceModelId={{DevModel}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"syncableRevisions"
+							],
+							"query": [
+								{
+									"key": "sourceModelId",
+									"value": "{{DevModel}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Retrieve latest revision tags",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/latestRevision",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"latestRevision"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Creating a sync tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"TaskId\", json.task.taskId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sourceRevisionId\": \"89413337818B4F4888D582E1311A77C4\",\n  \"sourceModelId\": \"{{DevModel}}\",\n  \"targetRevisionId\": \"11B1AF25B71542F0BE9E7557A16FBECC\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/syncTasks",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"syncTasks"
+							],
+							"query": [
+								{
+									"key": "Auth",
+									"value": "AnaplanAuthToken Df6kqG5+pMl4VXmIphx38Q==.yranBeI/CIbFiRMpYnWYA3GfGVP/knlPnbJaU3G5eppkS/YkaclGk9v7lrXwQNOa2kH4+fdicszHi2+XjWPJ2cKqsQ1qi+l/DGYBba90br2Anoh9f+4GNi8ELWfT60PHpJHyVuWFGeA6h1cH6IEc6MJP7w51mS9UPrrlwfR3yMbfLy8CGMgQ4uL2UDWXNJCndXmA42dWaapJhEBH6kJllQjM82D/Uvl60vWUbJu3WOEGYglGrA6erCy+kAZ9I+xKjrLwrKBqKMT9KsggoVpqNV4VCMSowSVnvm/JNBFFykK6Q958XeQz9jo0XgkfYRgBu+kyzCidVGy3US6/c9rq8+okC5v0MiuQz9Fi/uoxVj/nHCBc7G8Zds6baYtsHi6wgoPF+0VsOni6ynyeyjYFqAUVgcGN4D8hRgUPX4GH0OKNvv3T+oU6iTipuMwr7Tl8ffbg3rg8J7dOfqm8Iy2QFwqmuKatGi/8qFQc0uBXyKxOdBy+Wq+POXwZa+I7jf8EDaQA2VGpGRPFYwuJMzxFoLvmX7LQbqPjG1XUMbayshs=.CAWwG88rI06nzRltj3El/aTmC/u9jbfJjBxoF+NwEQ0=",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Retrieving model Sync Task info",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/syncTasks/{{TaskId}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"syncTasks",
+								"{{TaskId}}"
+							],
+							"query": [
+								{
+									"key": "Auth",
+									"value": "AnaplanAuthToken Df6kqG5+pMl4VXmIphx38Q==.yranBeI/CIbFiRMpYnWYA3GfGVP/knlPnbJaU3G5eppkS/YkaclGk9v7lrXwQNOa2kH4+fdicszHi2+XjWPJ2cKqsQ1qi+l/DGYBba90br2Anoh9f+4GNi8ELWfT60PHpJHyVuWFGeA6h1cH6IEc6MJP7w51mS9UPrrlwfR3yMbfLy8CGMgQ4uL2UDWXNJCndXmA42dWaapJhEBH6kJllQjM82D/Uvl60vWUbJu3WOEGYglGrA6erCy+kAZ9I+xKjrLwrKBqKMT9KsggoVpqNV4VCMSowSVnvm/JNBFFykK6Q958XeQz9jo0XgkfYRgBu+kyzCidVGy3US6/c9rq8+okC5v0MiuQz9Fi/uoxVj/nHCBc7G8Zds6baYtsHi6wgoPF+0VsOni6ynyeyjYFqAUVgcGN4D8hRgUPX4GH0OKNvv3T+oU6iTipuMwr7Tl8ffbg3rg8J7dOfqm8Iy2QFwqmuKatGi/8qFQc0uBXyKxOdBy+Wq+POXwZa+I7jf8EDaQA2VGpGRPFYwuJMzxFoLvmX7LQbqPjG1XUMbayshs=.CAWwG88rI06nzRltj3El/aTmC/u9jbfJjBxoF+NwEQ0=",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Retrieving the sync tasks",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/syncTasks",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"syncTasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8. Creating Revision Tag",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"REV3\",\n  \"description\": \"Data added to country list\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{DevModel}}/alm/revisions",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{DevModel}}",
+								"alm",
+								"revisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9. Retrieve all revision tags",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{DevModel}}/alm/revisions",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{DevModel}}",
+								"alm",
+								"revisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "10. Retrieve the models for a specific revision",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/revisions/2E830C0229B64158BB242B045E4B03D8/appliedToModels",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"revisions",
+								"2E830C0229B64158BB242B045E4B03D8",
+								"appliedToModels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11. Create a full comparison report generation task",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sourceRevisionId\": \"89413337818B4F4888D582E1311A77C4\",\n  \"sourceModelId\": \"{{DevModel}}\",\n  \"targetRevisionId\": \"11B1AF25B71542F0BE9E7557A16FBECC\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/comparisonReportTasks",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"comparisonReportTasks"
+							],
+							"query": [
+								{
+									"key": "Auth",
+									"value": "AnaplanAuthToken Df6kqG5+pMl4VXmIphx38Q==.yranBeI/CIbFiRMpYnWYA3GfGVP/knlPnbJaU3G5eppkS/YkaclGk9v7lrXwQNOa2kH4+fdicszHi2+XjWPJ2cKqsQ1qi+l/DGYBba90br2Anoh9f+4GNi8ELWfT60PHpJHyVuWFGeA6h1cH6IEc6MJP7w51mS9UPrrlwfR3yMbfLy8CGMgQ4uL2UDWXNJCndXmA42dWaapJhEBH6kJllQjM82D/Uvl60vWUbJu3WOEGYglGrA6erCy+kAZ9I+xKjrLwrKBqKMT9KsggoVpqNV4VCMSowSVnvm/JNBFFykK6Q958XeQz9jo0XgkfYRgBu+kyzCidVGy3US6/c9rq8+okC5v0MiuQz9Fi/uoxVj/nHCBc7G8Zds6baYtsHi6wgoPF+0VsOni6ynyeyjYFqAUVgcGN4D8hRgUPX4GH0OKNvv3T+oU6iTipuMwr7Tl8ffbg3rg8J7dOfqm8Iy2QFwqmuKatGi/8qFQc0uBXyKxOdBy+Wq+POXwZa+I7jf8EDaQA2VGpGRPFYwuJMzxFoLvmX7LQbqPjG1XUMbayshs=.CAWwG88rI06nzRltj3El/aTmC/u9jbfJjBxoF+NwEQ0=",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "12. Retrieve the content for a full comparison report",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/comparisonReportTasks/94AB2FCFE8574613B37993DBBB2916D2",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"comparisonReportTasks",
+								"94AB2FCFE8574613B37993DBBB2916D2"
+							],
+							"query": [
+								{
+									"key": "Auth",
+									"value": "AnaplanAuthToken Df6kqG5+pMl4VXmIphx38Q==.yranBeI/CIbFiRMpYnWYA3GfGVP/knlPnbJaU3G5eppkS/YkaclGk9v7lrXwQNOa2kH4+fdicszHi2+XjWPJ2cKqsQ1qi+l/DGYBba90br2Anoh9f+4GNi8ELWfT60PHpJHyVuWFGeA6h1cH6IEc6MJP7w51mS9UPrrlwfR3yMbfLy8CGMgQ4uL2UDWXNJCndXmA42dWaapJhEBH6kJllQjM82D/Uvl60vWUbJu3WOEGYglGrA6erCy+kAZ9I+xKjrLwrKBqKMT9KsggoVpqNV4VCMSowSVnvm/JNBFFykK6Q958XeQz9jo0XgkfYRgBu+kyzCidVGy3US6/c9rq8+okC5v0MiuQz9Fi/uoxVj/nHCBc7G8Zds6baYtsHi6wgoPF+0VsOni6ynyeyjYFqAUVgcGN4D8hRgUPX4GH0OKNvv3T+oU6iTipuMwr7Tl8ffbg3rg8J7dOfqm8Iy2QFwqmuKatGi/8qFQc0uBXyKxOdBy+Wq+POXwZa+I7jf8EDaQA2VGpGRPFYwuJMzxFoLvmX7LQbqPjG1XUMbayshs=.CAWwG88rI06nzRltj3El/aTmC/u9jbfJjBxoF+NwEQ0=",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "13. Create a summary report generation task",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sourceRevisionId\": \"09D7BF76830446FAA7285078BF216497\",\n  \"sourceModelId\": \"70B66786ED364218AEA5E625962A38D6\",\n  \"targetRevisionId\": \"CE9623B6360E4D56982E351B54F56B11\"\n}"
+						},
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/summaryReportTasks",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"summaryReportTasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "14. Retrieve the contents for a summary report",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/summaryReportTasks/94AB2FCFE8574613B37993DBBB2916D2",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"summaryReportTasks",
+								"94AB2FCFE8574613B37993DBBB2916D2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "15. Retrieve the info for a summary report generation task",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/{{TestModel}}/alm/summaryReportTasks/926D9DAC08B549299504001EBC26AAEA",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"{{TestModel}}",
+								"alm",
+								"summaryReportTasks",
+								"926D9DAC08B549299504001EBC26AAEA"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "16. Full comparison report",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://api.anaplan.com/2/0/models/ABA6D20C22B14914BD7191CFA85AA77B/alm/comparisonReports/11B1AF25B71542F0BE9E7557A16FBECC/89413337818B4F4888D582E1311A77C4",
+							"protocol": "https",
+							"host": [
+								"api",
+								"anaplan",
+								"com"
+							],
+							"path": [
+								"2",
+								"0",
+								"models",
+								"ABA6D20C22B14914BD7191CFA85AA77B",
+								"alm",
+								"comparisonReports",
+								"11B1AF25B71542F0BE9E7557A16FBECC",
+								"89413337818B4F4888D582E1311A77C4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Custom APIs",
+			"item": [
+				{
+					"name": "1. Auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"customToken\", \"AnaplanAuthToken \" + json.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"srishti.sharma5@wipro.com\",\r\n    \"password\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get Workspaces",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{customToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/workspaces",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Get Models",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{customToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/models?workspace=8a81b08e664b157b0166b14696a07d8b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"models"
+							],
+							"query": [
+								{
+									"key": "workspace",
+									"value": "8a81b08e664b157b0166b14696a07d8b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Get Model Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{customToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/model?model=49CF10A078DD4132A68C85C8DFB1F5FE",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"model"
+							],
+							"query": [
+								{
+									"key": "model",
+									"value": "49CF10A078DD4132A68C85C8DFB1F5FE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Change Model State (Online/Offline)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{customToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"offline\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/alm/update-model-state?id=ABA6D20C22B14914BD7191CFA85AA77B",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"alm",
+								"update-model-state"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "ABA6D20C22B14914BD7191CFA85AA77B"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Check Available Revisions",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{customToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"targetModelId\": \"ABA6D20C22B14914BD7191CFA85AA77B\",\r\n    \"sourceModelId\": \"49CF10A078DD4132A68C85C8DFB1F5FE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/alm/available-revisions-to-sync",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"alm",
+								"available-revisions-to-sync"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Start task to sync changes",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{customToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"targetModelId\": \"ABA6D20C22B14914BD7191CFA85AA77B\",\r\n    \"sourceModelId\": \"49CF10A078DD4132A68C85C8DFB1F5FE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/alm/task-info",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"alm",
+								"task-info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8. Generate Comparison Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{customToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"targetModelId\": \"{{TestModel}}\",\r\n    \"sourceModelId\": \"{{DevModel}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/alm/generate-comparison-report?type=full",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"alm",
+								"generate-comparison-report"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "full"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "client_id",
+			"value": "AXzpmRJvbPeWGsdAmpAzw9PJGbi9mGft",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "sbei1aBHCPC27vTBslvZGwKCsKmKrAzQXGO43HffEw8GK",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "DevWorkspace",
+			"value": "8a81b08e664b157b0166b14696a07d8b",
+			"type": "string"
+		},
+		{
+			"key": "DevModel",
+			"value": "49CF10A078DD4132A68C85C8DFB1F5FE",
+			"type": "string"
+		},
+		{
+			"key": "TestWorkspace",
+			"value": "8a81b08e664b157b0166b14696a07d8b",
+			"type": "string"
+		},
+		{
+			"key": "TestModel",
+			"value": "ABA6D20C22B14914BD7191CFA85AA77B",
+			"type": "string"
+		},
+		{
+			"key": "TaskId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "customToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
